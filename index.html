@@ -177,11 +177,30 @@ document.head.appendChild(style);
 
 let clickCount = 0;
 
-// 🔥 FIXED CLICK LISTENER
-window.addEventListener("click", () => {
+let startX = 0;
+let startY = 0;
+let isDragging = false;
 
-  if (!isUnlocked) return;   // 🔒 NOTHING works before password
+renderer.domElement.addEventListener("pointerdown", (e) => {
+  startX = e.clientX;
+  startY = e.clientY;
+  isDragging = false;
+});
+
+renderer.domElement.addEventListener("pointermove", (e) => {
+  const moveX = Math.abs(e.clientX - startX);
+  const moveY = Math.abs(e.clientY - startY);
+
+  if (moveX > 6 || moveY > 6) {
+    isDragging = true;
+  }
+});
+
+renderer.domElement.addEventListener("pointerup", () => {
+
+  if (!isUnlocked) return;
   if (!teddy) return;
+  if (isDragging) return; // If user was rotating, don't squeeze
 
   clickCount++;
 
@@ -223,5 +242,6 @@ window.addEventListener("resize", () => {
 
 </body>
 </html>
+
 
 
