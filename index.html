@@ -112,6 +112,9 @@ camera.position.set(0, 0, 5);
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.minDistance = 3;   // minimum zoom-in
+controls.maxDistance = 6;   // maximum zoom-out
+
 
 const loader = new THREE.GLTFLoader();
 const dracoLoader = new THREE.DRACOLoader();
@@ -128,8 +131,14 @@ loader.load(
     teddy.scale.set(2.3, 2.3, 2.3);
     teddy.position.set(0, -1.5, 0);
     teddy.rotation.y = -Math.PI / 2;
+    controls.minPolarAngle = Math.PI / 3;
+    controls.maxPolarAngle = Math.PI / 1.8;
+
 
     scene.add(teddy);
+    controls.target.set(0, -1.5, 0);
+    controls.update();
+
   },
   undefined,
   function (error) {
@@ -216,3 +225,4 @@ window.addEventListener("resize", () => {
 
 </body>
 </html>
+
