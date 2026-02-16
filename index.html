@@ -18,6 +18,10 @@
       font-family: Arial;
       z-index: 10;
     }
+    .blur {
+  filter: blur(8px);
+}
+
   </style>
 </head>
 <body>
@@ -50,6 +54,36 @@ cursor:pointer;
 </div>
 
 <h1>Touch Me 🧸</h1>
+<button id="noteBtn" style="
+position:absolute;
+top:20px;
+right:20px;
+z-index:20;
+padding:8px 14px;
+border:none;
+border-radius:15px;
+background:#ff4f81;
+color:white;
+cursor:pointer;
+">
+Open Note 💌
+</button>
+
+<button id="muteBtn" style="
+position:absolute;
+top:20px;
+left:20px;
+z-index:20;
+padding:8px 14px;
+border:none;
+border-radius:15px;
+background:#555;
+color:white;
+cursor:pointer;
+">
+🔊
+</button>
+
 
 <h2 id="loveMessage" style="
 position:absolute;
@@ -64,6 +98,40 @@ transition:opacity 1s, transform 1s;
 ">
 Happy Teddy Day My Love ❤️
 </h2>
+  
+  <div id="secretNote" style="
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%, -50%);
+background:white;
+padding:25px;
+border-radius:20px;
+width:80%;
+max-width:350px;
+text-align:center;
+font-family:Arial;
+display:none;
+z-index:30;
+">
+<h3>💌 A Special Message</h3>
+<p>
+You are the cutest part of my life.  
+Thank you for existing ❤️
+</p>
+<button onclick="toggleNote()" style="
+margin-top:15px;
+padding:8px 14px;
+border:none;
+border-radius:15px;
+background:#ff4f81;
+color:white;
+cursor:pointer;
+">
+Close
+</button>
+</div>
+
 
 <audio id="bgMusic" src="music.mp3" loop></audio>
 <audio id="squeakSound" src="squeak.mp3"></audio>
@@ -237,11 +305,55 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+  let noteOpen = false;
+
+function toggleNote() {
+  if (!isUnlocked) return;
+  if (!teddy) return;
+
+  noteOpen = !noteOpen;
+
+  const note = document.getElementById("secretNote");
+  const canvas = renderer.domElement;
+  const header = document.querySelector("h1");
+
+  if (noteOpen) {
+    // Rotate teddy to back
+    teddy.rotation.y += Math.PI;
+
+    // Blur background
+    canvas.classList.add("blur");
+    header.classList.add("blur");
+
+    note.style.display = "block";
+  } else {
+    // Rotate teddy to front
+    teddy.rotation.y -= Math.PI;
+
+    canvas.classList.remove("blur");
+    header.classList.remove("blur");
+
+    note.style.display = "none";
+  }
+}
+
+document.getElementById("noteBtn").addEventListener("click", toggleNote);
+
+// 🔊 MUTE BUTTON LOGIC
+const bgMusic = document.getElementById("bgMusic");
+const muteBtn = document.getElementById("muteBtn");
+
+muteBtn.addEventListener("click", () => {
+  bgMusic.muted = !bgMusic.muted;
+  muteBtn.innerText = bgMusic.muted ? "🔇" : "🔊";
+});
+
 </script>
 
 
 </body>
 </html>
+
 
 
 
