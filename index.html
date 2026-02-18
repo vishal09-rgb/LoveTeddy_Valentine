@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Teddy Day ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #ffd1dc;
+    }
+    h1 {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-family: Arial;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ✅ INTRO SCREEN -->
+<div id="introScreen" style="
+position:fixed;
+width:100%;
+height:100%;
+background:#ffd1dc;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:999;
+font-family:Arial;
+text-align:center;
+">
+<h1>3D Teddy Surprise 🧸</h1>
+<p>Enter your surprise code to continue ❤️</p>
+<button onclick="startExperience()" style="
+padding:12px 25px;
+border:none;
+border-radius:20px;
+background:#ff4f81;
+color:white;
+font-size:16px;
+cursor:pointer;
+">Enter</button>
+</div>
+
+<h1>Touch Me 🧸</h1>
+
+<h2 id="loveMessage" style="
+position:absolute;
+top:80px;
+width:100%;
+text-align:center;
+color:white;
+font-family:Arial;
+opacity:0;
+transform:scale(0.8);
+transition:opacity 1s, transform 1s;
+">
+Happy Teddy Day My Love ❤️
+</h2>
+
+<audio id="bgMusic" src="music.mp3" loop></audio>
+<audio id="squeakSound" src="squeak.mp3"></audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/DRACOLoader.js"></script>
+
+<script>
+
+// 🔒 LOCK VARIABLE
+let isUnlocked = false;
+
+// ✅ PASSWORD PROTECTION
+function startExperience() {
+  const password = prompt("Enter your surprise code ❤️");
+
+  if (password !== "LOVE2026") {
+    alert("Wrong code ❤️");
+    return;
+  }
+
+  isUnlocked = true;
+  document.getElementById("introScreen").style.display = "none";
+}
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xffd1dc);
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
+scene.add(light);
+
+camera.position.set(0, 0, 5);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+const loader = new THREE.GLTFLoader();
+const dracoLoader = new THREE.DRACOLoader();
+dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+loader.setDRACOLoader(dracoLoader);
+
+let teddy;
+
+loader.load(
+  "teddy_bear.glb",
+  function (gltf) {
+    teddy = gltf.scene;
+
+    teddy.scale.set(2.3, 2.3, 2.3);
+    teddy.position.set(0, -1.5, 0);
+    teddy.rotation.y = -Math.PI / 2;
+
+    scene.add(teddy);
+  }
+);
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+
+// ❤️ FLOATING HEARTS
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.innerHTML = "💖";
+  heart.style.position = "absolute";
+  heart.style.left = Math.random() * window.innerWidth + "px";
+  heart.style.top = window.innerHeight + "px";
+  heart.style.fontSize = "24px";
+  heart.style.animation = "floatUp 3s linear forwards";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 3000);
+}
+
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes floatUp {
+  to { transform: translateY(-100vh); opacity: 0; }
+}`;
+document.head.appendChild(style);
+
+
+// 🔥 NOTE SYSTEM
+let noteOpen = false;
+
+// Create button
+const noteBtn = document.createElement("button");
+noteBtn.innerText = "Open Note 💌";
+noteBtn.style.position = "absolute";
+noteBtn.style.top = "20px";
+noteBtn.style.right = "20px";
+noteBtn.style.padding = "8px 15px";
+noteBtn.style.borderRadius = "15px";
+noteBtn.style.border = "none";
+noteBtn.style.background = "#ff4f81";
+noteBtn.style.color = "white";
+noteBtn.style.cursor = "pointer";
+noteBtn.style.zIndex = "20";
+document.body.appendChild(noteBtn);
+
+// Create note box
+const noteBox = document.createElement("div");
+noteBox.innerHTML = `
+<h3>💌 A Special Message</h3>
+<p>You are the cutest part of my life.  
+Thank you for existing ❤️</p>
+<button id="closeNote">Close</button>
+`;
+noteBox.style.position = "fixed";
+noteBox.style.top = "50%";
+noteBox.style.left = "50%";
+noteBox.style.transform = "translate(-50%,-50%)";
+noteBox.style.background = "white";
+noteBox.style.padding = "25px";
+noteBox.style.borderRadius = "20px";
+noteBox.style.textAlign = "center";
+noteBox.style.display = "none";
+noteBox.style.zIndex = "1000";
+document.body.appendChild(noteBox);
+
+noteBtn.onclick = () => {
+  if (!isUnlocked) return;
+  noteOpen = true;
+  controls.enabled = false;
+  noteBox.style.display = "block";
+  renderer.domElement.style.filter = "blur(8px)";
+  if (teddy) teddy.rotation.y += Math.PI;
+};
+
+document.getElementById("closeNote").onclick = () => {
+  noteOpen = false;
+  controls.enabled = true;
+  noteBox.style.display = "none";
+  renderer.domElement.style.filter = "none";
+  if (teddy) teddy.rotation.y -= Math.PI;
+};
+
+
+// 🔊 MUTE BUTTON
+const muteBtn = document.createElement("button");
+muteBtn.innerText = "🔊";
+muteBtn.style.position = "absolute";
+muteBtn.style.top = "20px";
+muteBtn.style.left = "20px";
+muteBtn.style.padding = "8px 15px";
+muteBtn.style.borderRadius = "15px";
+muteBtn.style.border = "none";
+muteBtn.style.background = "#555";
+muteBtn.style.color = "white";
+muteBtn.style.cursor = "pointer";
+muteBtn.style.zIndex = "20";
+document.body.appendChild(muteBtn);
+
+let muted = false;
+muteBtn.onclick = () => {
+  const music = document.getElementById("bgMusic");
+  muted = !muted;
+  music.muted = muted;
+  muteBtn.innerText = muted ? "🔇" : "🔊";
+};
+
+
+// 🎯 SQUEEZE SYSTEM
+let clickCount = 0;
+
+window.addEventListener("click", () => {
+
+  if (!isUnlocked) return;
+  if (!teddy) return;
+  if (noteOpen) return;
+
+  clickCount++;
+
+  const squeak = document.getElementById("squeakSound");
+  squeak.currentTime = 0;
+  squeak.play();
+
+  teddy.scale.set(2.4, 1.5, 2.4);
+  setTimeout(() => teddy.scale.set(2.2, 2.6, 2.2), 120);
+  setTimeout(() => teddy.scale.set(2.4, 2.4, 2.4), 250);
+
+  if (clickCount === 3) {
+    const msg = document.getElementById("loveMessage");
+    msg.style.opacity = "1";
+    msg.style.transform = "scale(1)";
+    document.getElementById("bgMusic").play();
+    setInterval(createHeart, 300);
+
+    let zoomInterval = setInterval(() => {
+      camera.position.z -= 0.05;
+      if (camera.position.z <= 3) clearInterval(zoomInterval);
+    }, 16);
+  }
+});
+
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+</script>
+
+
+</body>
+</html>
